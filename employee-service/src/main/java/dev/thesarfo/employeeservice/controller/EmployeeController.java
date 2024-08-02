@@ -1,5 +1,6 @@
 package dev.thesarfo.employeeservice.controller;
 
+import dev.thesarfo.employeeservice.dto.APIResponseDto;
 import dev.thesarfo.employeeservice.dto.EmployeeDto;
 import dev.thesarfo.employeeservice.service.EmployeeService;
 import lombok.AllArgsConstructor;
@@ -27,9 +28,9 @@ public class EmployeeController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<EmployeeDto> getEmployee(@PathVariable("id") Long employeeId) {
-        EmployeeDto employeeDto = employeeService.getEmployeeById(employeeId);
+    public ResponseEntity<APIResponseDto> getEmployee(@PathVariable("id") Long employeeId) {
+        APIResponseDto apiResponseDto = employeeService.getEmployeeById(employeeId);
 
-        return new ResponseEntity<>(employeeDto, HttpStatus.OK);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
 }
