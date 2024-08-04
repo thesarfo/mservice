@@ -1,9 +1,10 @@
 This is a minimalistic Employee Management Application built on the **Microservice Architecture**
 
-There are three services so far
+There are four services so far
 - Department Service
 - Employee Service
 - Service Registry : This service registers all the other services, to enable service discovery.
+- API Gateway - routes the client request to the appropriate microservice
 
 #### Microservice Communication
 In a Spring Context, microservices can communicate through different channels
@@ -33,3 +34,13 @@ Mostly, we have to create a separate spring boot project as a microservice(servi
 Let's take this example. We have two instances of our Department Service running, and our Employee service makes an API call to the Department Service via Open Feign. But let's say one instance of the Department Service goes down, how do we ensure that all the incoming requests from the Employee service are automatically re-routed to the running instance of the Department Service. This is where load-balancing comes in. Spring Cloud Netflix comes with Spring Cloud Load Balancer out of the box. Whenever we use Open Feign in Conjunction with Eureka Server, Eureka Server comes with Spring Cloud Load Balancer. 
 
 In order to implement load-balancing, we just have to change the url of our Open Feign with the service id that is provided in Eureka Server. For instance, we will make the Employee service's Open Feign client make a request to "DEPARTMENT-SERVICE" - since this is the Service ID provided by Eureka Server
+
+
+#### API Gateway
+1. API Gateway provides a unified interface for a set of microservices so that clients don't need to know about all the details of microservices internals
+2. API Gateway centralizes cross-cutting concerns like security, monitoring, rate limiting etc.
+3. Spring Cloud provides **Spring Cloud Gateway** to create an API gateway. 
+
+Let's take this example. We have multiple microservices. And each one has their own hostname and port. Now let's say our client makes a request to the API of each microservice. This means that our client needs to know the hostname and port of all the microservices, which is not ideal, especially in a large system. This is where an API gateway comes in, it sits between the client and the microservices, and the client makes a request through the API Gateway - which will then dynamically route the client's request to the appropriate microservice, based on some predefined rules. An API gateway can also be used for load balancing, and security.
+
+Mostly in spring contexts, an API Gateway is a separate microservice which is registered as a Eureka Client to the Eureka Server(Service Registry). After setting up an API Gateway, all subsequent client requests should hit the Gateway endpoint for it to do the re-routing.
