@@ -1,4 +1,4 @@
-This is a minimalistic Employee Management Application built on the **Microservice Architecture**
+Super minimalistic application built on the **Microservice Architecture**
 
 There are five services so far
 - Department Service
