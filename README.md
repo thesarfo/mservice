@@ -61,3 +61,21 @@ One challenge in the Microservice Architecture is the ability to debug issues. W
 Spring Cloud provides us with the below services for Distributed Tracing
 1. **Micrometer** for distributed tracing. Just add the dependency to your microservices and it will automatically enable distributed tracing.
 2. **Zipkin** to visualize trace information through a UI
+
+## Circuit Breaker
+The main idea behind this design pattern is that let's say one service(A) calls another service(B) during each request. If for any reason, service B goes down, we want service A to return a default response, without having to rely on service B, ie a fallback. This is the Circuit Breaker pattern. In a spring context for instance, we can use Resilience4j to implement the circuit breaker pattern, and we can use the actuator's health endpoints to monitor the state of the circuit breaking.
+
+Core states of a circuit breaker
+1. **Closed**: All requests pass through. Transitions to open if failure rate exceeds the threshold.
+2. **Open**: No requests pass through; an immediate fallback response is returned. Remains open for a specified timeout before transitioning to half-open.
+3. **Half-Open**: Allows a limited number of test requests to check if the service has recovered. Transitions back to closed on success or back to open on failure.
+
+Configuration Properties (with Resilience4j)
+1. **Health Indicator**: Registers health status with Spring Boot Actuator (register-health-indicator=true).
+2. **Failure Rate Threshold**: Percentage of failed requests to trigger open state (failure-rate-threshold=50).
+3. **Minimum Calls**: Minimum number of requests before failure rate calculation (minimum-number-of-calls=5).
+4. **Automatic Transition**: Enables automatic transition from open to half-open (automatic-transition-from-open-to-half-open-enabled=true).
+5. **Wait Duration**: Time to wait in open state before transitioning to half-open (wait-duration-in-open-state=5s).
+6. **Permitted Calls in Half-Open**: Number of test requests allowed in half-open state (permitted-number-of-calls-in-half-open-state=3).
+7. **Sliding Window Size**: Number of requests to consider for failure rate calculation (sliding-window-size=10).
+8. **Sliding Window Type**: Basis for sliding window, count-based in this case (sliding-window-type=COUNT_BASED).
