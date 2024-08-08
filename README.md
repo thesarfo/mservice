@@ -79,3 +79,5 @@ Configuration Properties (with Resilience4j)
 6. **Permitted Calls in Half-Open**: Number of test requests allowed in half-open state (permitted-number-of-calls-in-half-open-state=3).
 7. **Sliding Window Size**: Number of requests to consider for failure rate calculation (sliding-window-size=10).
 8. **Sliding Window Type**: Basis for sliding window, count-based in this case (sliding-window-type=COUNT_BASED).
+
+There is also the **Retry Pattern** where, when microservice B is down, it allows microservice A to retry the request for a certain number of times.
