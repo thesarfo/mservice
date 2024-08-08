@@ -3,6 +3,7 @@ package dev.thesarfo.employeeservice.service.impl;
 import dev.thesarfo.employeeservice.dto.APIResponseDto;
 import dev.thesarfo.employeeservice.dto.DepartmentDto;
 import dev.thesarfo.employeeservice.dto.EmployeeDto;
+import dev.thesarfo.employeeservice.dto.OrganizationDto;
 import dev.thesarfo.employeeservice.entity.Employee;
 import dev.thesarfo.employeeservice.mapper.EmployeeMapper;
 import dev.thesarfo.employeeservice.repository.EmployeeRepository;
@@ -56,11 +57,18 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .block();
 //        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
+        OrganizationDto organizationDto = webClient.get()
+                .uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+                .retrieve()
+                .bodyToMono(OrganizationDto.class)
+                .block();
+
         EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
         APIResponseDto apiResponseDto = new APIResponseDto();
-        apiResponseDto.setEmployeeDto(employeeDto);
-        apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
+        apiResponseDto.setOrganization(organizationDto);
 
         return apiResponseDto;
     }
@@ -79,8 +87,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
 
         APIResponseDto apiResponseDto = new APIResponseDto();
-        apiResponseDto.setEmployeeDto(employeeDto);
-        apiResponseDto.setDepartmentDto(departmentDto);
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
 
         return apiResponseDto;
     }
