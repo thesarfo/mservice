@@ -3,6 +3,8 @@ package dev.thesarfo.employeeservice.controller;
 import dev.thesarfo.employeeservice.dto.APIResponseDto;
 import dev.thesarfo.employeeservice.dto.EmployeeDto;
 import dev.thesarfo.employeeservice.service.EmployeeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,14 @@ public class EmployeeController {
 
     private EmployeeService employeeService;
 
+    @Operation(
+            summary = "Save employee",
+            description = "This endpoint is used to save an employee in the db"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "HTTP Status 201 CREATED"
+    )
     @PostMapping
     public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody EmployeeDto employeeDto) {
         EmployeeDto savedEmployee = employeeService.saveEmployee(employeeDto);
@@ -27,6 +37,14 @@ public class EmployeeController {
         return new ResponseEntity<>(savedEmployee, HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Get employee",
+            description = "This endpoint is used to get an employee object from the db"
+    )
+    @ApiResponse(
+            responseCode = "200",
+            description = "HTTP Status 200 OK"
+    )
     @GetMapping("{id}")
     public ResponseEntity<APIResponseDto> getEmployee(@PathVariable("id") Long employeeId) {
         APIResponseDto apiResponseDto = employeeService.getEmployeeById(employeeId);
