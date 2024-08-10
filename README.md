@@ -1,8 +1,9 @@
 Super minimalistic application built on the **Microservice Architecture**
 
-There are five services so far
+There are six services so far
 - Department Service
 - Employee Service
+- Organization Service
 - Service Registry : This service registers all the other services, to enable service discovery.
 - API Gateway - routes the client request to the appropriate microservice
 - Config Server - Central hub for project specific configurations which are loaded by the microservices.
@@ -81,3 +82,72 @@ Configuration Properties (with Resilience4j)
 8. **Sliding Window Type**: Basis for sliding window, count-based in this case (sliding-window-type=COUNT_BASED).
 
 There is also the **Retry Pattern** where, when microservice B is down, it allows microservice A to retry the request for a certain number of times.
+
+## General Docker Workflow
+It all starts with a **Dockerfile** which is simply a text file that contains all the instructions and commands needed to build a **docker image**. Once
+you've created the Dockerfile, you can use the `docker build` command to build the docker image. A **docker image** is an executable package that runs in a container. A **docker container** is nothing but a running instance of a docker image. This entire process is known as `dockerization`. Once we have the docker image, we can push it to **docker hub**, which then can be run in every environment of choice.
+
+below are some simple docker commands highlighting the workflow:
+
+Dockerfile -> `docker build` -> Docker image -> `docker run` -> Docker container -> `Docker push` -> Docker hub
+
+#### 1. Create a dockerfile
+The dockerfile is just a bunch of instructions you will use to build your image. Before we get started, you need to package your application. This can be done by running the maven `clean` and `package` commands. Which will basically create a `jar` file for your app
+
+Now, create a dockerfile. The first line of your dockerfile will define the docker image which will provide your java version. And then, you can add your own labels, for instance a maintainer. The third thing you need to do is to create your working directory. This directory will be created in your docker container to run your application.
+
+Now, you need to copy the `jar` file that was created in your target directory, into the working directory you defined above.
+
+Finally, you then specify an `entrypoint`, which is simply the commands to run the jar file
+
+A sample docker file could look like this
+```dockerfile
+FROM eclipse-temurin:21
+
+LABEL maintainer="thesarfo1@gmail.com"
+
+WORKDIR /app
+
+COPY target/service-registry-0.0.1-SNAPSHOT.jar /app/service-registry.jar
+
+ENTRYPOINT["java", "-jar", "service-registry.jar"]
+```
+#### 2. Build a docker image from the dockerfile
+First of all, make sure docker desktop is running on your pc.
+
+Then, navigate to the root directory of your app. And build the image from the docker file. The command could look like this:
+`docker build -t service-registry .`
+
+The `-t` flag is used to tag our docker image, and the `.` at the end refers to where our dockerfile is located. We can tag our docker image like this `docker build -t service-registry:0.1.RELEASE .`
+
+#### 3. Run the docker image in a docker container
+It can be done with the docker run command. view a sample below
+`docker run -p 8761:8761 service-registry`
+
+The `-p` flag is used to map the ports between the host and the docker container. The host port doesn't have to be the same as the container port.
+
+
+#### Extra - Running a docker container in detached mode(in the background)
+`docker run -p 8761:8761 -d service-registry`
+
+When this command is run, the container runs in the background(without any logs displaying etc, but a unique id is given to us). We can view the logs using the unique id(first four digits), with the below command
+
+`docker logs -f 1424`
+
+You can stop the container with:
+`docker stop 1424`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
